@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberTrade Pro - Threat Intelligence & Trading Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/chart.css">
+  <link rel="stylesheet" href="/css/threats.css">
+  <link rel="stylesheet" href="/css/trading.css">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="top-bar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 32 32" width="28" height="28">
+          <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00e5ff"/><stop offset="100%" style="stop-color:#7c4dff"/>
+          </linearGradient></defs>
+          <path d="M16 2L4 8v8c0 7.7 5.1 14.9 12 16 6.9-1.1 12-8.3 12-16V8L16 2z" fill="none" stroke="url(#lg)" stroke-width="2"/>
+          <path d="M10 16l4 4 8-8" fill="none" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">CyberTrade <span class="logo-pro">PRO</span></span>
+    </div>
+    <nav class="main-nav">
+      <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+      <button class="nav-btn" data-view="trading">Trading</button>
+      <button class="nav-btn" data-view="threats">Threats</button>
+      <button class="nav-btn" data-view="portfolio">Portfolio</button>
+    </nav>
+    <div class="top-bar-right">
+      <div class="threat-level-indicator">
+        <span class="threat-label">THREAT LEVEL</span>
+        <span class="threat-level" id="globalThreatLevel">ELEVATED</span>
+      </div>
+      <div class="connection-status" id="connectionStatus">
+        <span class="status-dot"></span>
+        <span>LIVE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Dashboard View -->
+    <div class="view active" id="dashboardView">
+      <!-- Stats Row -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card critical">
+          <div class="stat-value" id="statCritical">0</div>
+          <div class="stat-label">Critical Threats</div>
+          <div class="stat-bar"><div class="stat-bar-fill critical-fill"></div></div>
+        </div>
+        <div class="stat-card high">
+          <div class="stat-value" id="statHigh">0</div>
+          <div class="stat-label">High Severity</div>
+          <div class="stat-bar"><div class="stat-bar-fill high-fill"></div></div>
+        </div>
+        <div class="stat-card medium">
+          <div class="stat-value" id="statMedium">0</div>
+          <div class="stat-label">Medium Severity</div>
+          <div class="stat-bar"><div class="stat-bar-fill medium-fill"></div></div>
+        </div>
+        <div class="stat-card blocked">
+          <div class="stat-value" id="statBlocked">0</div>
+          <div class="stat-label">Threats Blocked</div>
+          <div class="stat-bar"><div class="stat-bar-fill blocked-fill"></div></div>
+        </div>
+        <div class="stat-card active-threats">
+          <div class="stat-value" id="statActive">0</div>
+          <div class="stat-label">Active Threats</div>
+          <div class="stat-bar"><div class="stat-bar-fill active-fill"></div></div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Main Chart -->
+        <div class="panel chart-panel" id="dashChartPanel">
+          <div class="panel-header">
+            <h3>Market Overview</h3>
+            <div class="symbol-selector" id="dashSymbolSelector"></div>
+          </div>
+          <div class="chart-container">
+            <canvas id="dashChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Threat Timeline -->
+        <div class="panel timeline-panel">
+          <div class="panel-header">
+            <h3>Threat Activity Timeline</h3>
+            <span class="panel-badge">LIVE</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="threatTimeline"></canvas>
+          </div>
+        </div>
+
+        <!-- Live Threat Feed -->
+        <div class="panel threat-feed-panel">
+          <div class="panel-header">
+            <h3>Live Threat Feed</h3>
+            <span class="panel-badge pulse">MONITORING</span>
+          </div>
+          <div class="threat-feed" id="threatFeed"></div>
+        </div>
+
+        <!-- Ticker Bar -->
+        <div class="panel ticker-panel">
+          <div class="panel-header">
+            <h3>Market Ticker</h3>
+          </div>
+          <div class="ticker-grid" id="tickerGrid"></div>
+        </div>
+
+        <!-- Threat Types Breakdown -->
+        <div class="panel types-panel">
+          <div class="panel-header">
+            <h3>Threat Categories</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="threatTypesChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Sector Targets -->
+        <div class="panel sectors-panel">
+          <div class="panel-header">
+            <h3>Targeted Sectors</h3>
+          </div>
+          <div class="sector-bars" id="sectorBars"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trading View -->
+    <div class="view" id="tradingView">
+      <div class="trading-layout">
+        <!-- Symbol List Sidebar -->
+        <div class="trading-sidebar">
+          <div class="sidebar-search">
+            <input type="text" placeholder="Search symbols..." id="symbolSearch">
+          </div>
+          <div class="symbol-list" id="symbolList"></div>
+        </div>
+
+        <!-- Main Trading Area -->
+        <div class="trading-main">
+          <!-- Chart Toolbar -->
+          <div class="chart-toolbar">
+            <div class="toolbar-left">
+              <span class="active-symbol" id="activeSymbol">BTC/USD</span>
+              <span class="active-price" id="activePrice">$0.00</span>
+              <span class="active-change" id="activeChange">0.00%</span>
+            </div>
+            <div class="toolbar-center">
+              <button class="tf-btn active" data-tf="1">1m</button>
+              <button class="tf-btn" data-tf="5">5m</button>
+              <button class="tf-btn" data-tf="15">15m</button>
+              <button class="tf-btn" data-tf="60">1H</button>
+              <button class="tf-btn" data-tf="240">4H</button>
+              <button class="tf-btn" data-tf="1440">1D</button>
+            </div>
+            <div class="toolbar-right">
+              <button class="chart-type-btn active" data-type="candle">Candles</button>
+              <button class="chart-type-btn" data-type="line">Line</button>
+              <button class="chart-type-btn" data-type="area">Area</button>
+              <div class="indicator-dropdown">
+                <button class="indicator-btn" id="indicatorBtn">Indicators</button>
+                <div class="indicator-menu" id="indicatorMenu">
+                  <label><input type="checkbox" data-ind="sma" checked> SMA (20)</label>
+                  <label><input type="checkbox" data-ind="ema"> EMA (12)</label>
+                  <label><input type="checkbox" data-ind="bollinger"> Bollinger Bands</label>
+                  <label><input type="checkbox" data-ind="volume" checked> Volume</label>
+                  <label><input type="checkbox" data-ind="rsi"> RSI</label>
+                  <label><input type="checkbox" data-ind="macd"> MACD</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Chart -->
+          <div class="main-chart-wrapper">
+            <div class="chart-area">
+              <canvas id="mainChart"></canvas>
+              <div class="crosshair-info" id="crosshairInfo"></div>
+            </div>
+            <div class="chart-y-axis" id="yAxisLabels"></div>
+          </div>
+
+          <!-- Volume / RSI Sub-chart -->
+          <div class="sub-chart-wrapper">
+            <canvas id="subChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Order Panel -->
+        <div class="trading-order-panel">
+          <div class="order-tabs">
+            <button class="order-tab active" data-side="buy">Buy</button>
+            <button class="order-tab" data-side="sell">Sell</button>
+          </div>
+          <div class="order-form" id="orderForm">
+            <div class="order-type-selector">
+              <button class="ot-btn active" data-otype="market">Market</button>
+              <button class="ot-btn" data-otype="limit">Limit</button>
+            </div>
+            <div class="order-field" id="limitPriceField" style="display:none">
+              <label>Price</label>
+              <input type="number" id="orderPrice" step="0.01" placeholder="0.00">
+            </div>
+            <div class="order-field">
+              <label>Amount</label>
+              <input type="number" id="orderQuantity" step="0.0001" placeholder="0.00" value="1">
+            </div>
+            <div class="order-field">
+              <label>Total</label>
+              <div class="order-total" id="orderTotal">$0.00</div>
+            </div>
+            <div class="order-percentages">
+              <button class="pct-btn" data-pct="25">25%</button>
+              <button class="pct-btn" data-pct="50">50%</button>
+              <button class="pct-btn" data-pct="75">75%</button>
+              <button class="pct-btn" data-pct="100">100%</button>
+            </div>
+            <button class="order-submit buy-btn" id="submitOrder">Buy BTC/USD</button>
+            <div class="order-balance">
+              Available: <span id="availableBalance">$100,000.00</span>
+            </div>
+          </div>
+
+          <!-- Order Book -->
+          <div class="orderbook-section">
+            <h4>Order Book</h4>
+            <div class="orderbook-header">
+              <span>Price</span><span>Amount</span><span>Total</span>
+            </div>
+            <div class="orderbook-asks" id="orderbookAsks"></div>
+            <div class="orderbook-spread" id="orderbookSpread">Spread: $0.00</div>
+            <div class="orderbook-bids" id="orderbookBids"></div>
+          </div>
+
+          <!-- Recent Trades -->
+          <div class="recent-trades-section">
+            <h4>Recent Trades</h4>
+            <div class="trades-header">
+              <span>Price</span><span>Amount</span><span>Time</span>
+            </div>
+            <div class="trades-list" id="tradesList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Threats View -->
+    <div class="view" id="threatsView">
+      <div class="threats-layout">
+        <div class="threats-main">
+          <!-- Threat Map -->
+          <div class="panel threat-map-panel">
+            <div class="panel-header">
+              <h3>Global Threat Map</h3>
+              <span class="panel-badge pulse">LIVE ATTACKS</span>
+            </div>
+            <div class="chart-container threat-map-container">
+              <canvas id="threatMap"></canvas>
+            </div>
+          </div>
+
+          <!-- Detailed Threat Table -->
+          <div class="panel threat-table-panel">
+            <div class="panel-header">
+              <h3>Threat Intelligence Feed</h3>
+              <div class="filter-bar">
+                <select id="severityFilter">
+                  <option value="all">All Severity</option>
+                  <option value="critical">Critical</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+                <select id="statusFilter">
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="blocked">Blocked</option>
+                  <option value="investigating">Investigating</option>
+                  <option value="mitigated">Mitigated</option>
+                </select>
+              </div>
+            </div>
+            <div class="threat-table-wrapper">
+              <table class="threat-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Source</th>
+                    <th>Target</th>
+                    <th>Sector</th>
+                    <th>CVSS</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="threatTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Threat Detail Sidebar -->
+        <div class="threats-sidebar">
+          <div class="panel threat-detail-panel">
+            <div class="panel-header"><h3>Threat Details</h3></div>
+            <div class="threat-detail-content" id="threatDetail">
+              <p class="no-selection">Select a threat to view details</p>
+            </div>
+          </div>
+          <div class="panel attack-vectors-panel">
+            <div class="panel-header"><h3>Attack Vectors</h3></div>
+            <div class="chart-container">
+              <canvas id="attackVectorsChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio View -->
+    <div class="view" id="portfolioView">
+      <div class="portfolio-layout">
+        <div class="portfolio-header-row">
+          <div class="panel portfolio-summary">
+            <div class="portfolio-value">
+              <span class="pv-label">Total Portfolio Value</span>
+              <span class="pv-amount" id="portfolioTotal">$100,000.00</span>
+            </div>
+            <div class="portfolio-stats">
+              <div class="ps-item">
+                <span class="ps-label">Available Cash</span>
+                <span class="ps-value" id="portfolioCash">$100,000.00</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">Invested</span>
+                <span class="ps-value" id="portfolioInvested">$0.00</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">P&L</span>
+                <span class="ps-value" id="portfolioPnl">$0.00</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel portfolio-chart-small">
+            <div class="panel-header"><h3>Portfolio Allocation</h3></div>
+            <canvas id="portfolioDonut"></canvas>
+          </div>
+        </div>
+        <div class="panel positions-panel">
+          <div class="panel-header"><h3>Open Positions</h3></div>
+          <table class="positions-table">
+            <thead>
+              <tr>
+                <th>Symbol</th><th>Quantity</th><th>Avg Price</th>
+                <th>Current Price</th><th>Market Value</th><th>P&L</th><th>P&L %</th>
+              </tr>
+            </thead>
+            <tbody id="positionsBody"></tbody>
+          </table>
+          <div class="empty-state" id="noPositions">No open positions. Start trading to build your portfolio.</div>
+        </div>
+        <div class="panel history-panel">
+          <div class="panel-header"><h3>Trade History</h3></div>
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Time</th><th>Symbol</th><th>Side</th><th>Type</th>
+                <th>Quantity</th><th>Price</th><th>Total</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+          <div class="empty-state" id="noHistory">No trade history yet.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/utils/helpers.js"></script>
+  <script src="/js/charts/candlestick.js"></script>
+  <script src="/js/charts/indicators.js"></script>
+  <script src="/js/charts/threatCharts.js"></script>
+  <script src="/js/components/orderbook.js"></script>
+  <script src="/js/components/threatFeed.js"></script>
+  <script src="/js/components/portfolio.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

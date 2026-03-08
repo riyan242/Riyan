@@ -1,0 +1,211 @@
+/* Trading Layout */
+.trading-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+.trading-sidebar {
+  width: 220px;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.sidebar-search {
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.sidebar-search input {
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  outline: none;
+}
+.sidebar-search input:focus { border-color: var(--accent-blue); }
+.symbol-list {
+  flex: 1;
+  overflow-y: auto;
+}
+.symbol-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(30,41,59,0.5);
+  transition: background 0.2s;
+}
+.symbol-list-item:hover { background: var(--bg-tertiary); }
+.symbol-list-item.active { background: rgba(0,229,255,0.08); border-left: 2px solid var(--accent-blue); }
+.sli-name { font-size: 12px; font-weight: 600; }
+.sli-price { font-size: 12px; font-family: var(--font-mono); }
+.sli-change { font-size: 10px; font-family: var(--font-mono); }
+.sli-change.positive { color: var(--buy-color); }
+.sli-change.negative { color: var(--sell-color); }
+/* Trading Main */
+.trading-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.active-symbol {
+  font-size: 16px;
+  font-weight: 700;
+}
+.active-price {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+.active-change {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.active-change.positive { color: var(--buy-color); background: rgba(0,230,118,0.1); }
+.active-change.negative { color: var(--sell-color); background: rgba(255,23,68,0.1); }
+.toolbar-center {
+  display: flex;
+  gap: 2px;
+}
+.tf-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.tf-btn:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+.tf-btn.active {
+  color: var(--accent-blue);
+  background: rgba(0,229,255,0.1);
+  border-color: rgba(0,229,255,0.3);
+}
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.chart-type-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.chart-type-btn:hover { color: var(--text-primary); }
+.chart-type-btn.active { color: var(--accent-blue); background: rgba(0,229,255,0.1); }
+.indicator-dropdown { position: relative; }
+.indicator-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.indicator-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px;
+  min-width: 180px;
+  z-index: 50;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.indicator-menu.open { display: block; }
+.indicator-menu label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.indicator-menu label:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.indicator-menu input[type="checkbox"] { accent-color: var(--accent-blue); }
+/* Main Chart */
+.main-chart-wrapper {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+}
+.chart-area {
+  flex: 1;
+  position: relative;
+  cursor: crosshair;
+}
+.chart-area canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.chart-y-axis {
+  width: 70px;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+.crosshair-info {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  pointer-events: none;
+  z-index: 5;
+  background: rgba(10,14,23,0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: none;
+}
+/* Sub Chart */
+.sub-chart-wrapper {
+  height: 100px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.sub-chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
